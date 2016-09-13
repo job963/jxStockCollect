@@ -62,7 +62,8 @@ class jxStockCollectCron
                 'url'        => $aProduct['jxurl'],
                 'pattern'    => $aProduct['jxpattern'],
                 'available'  => $aProduct['jxavailabletext'],
-                'outofstock' => $aProduct['jxoutofstocktext']
+                'outofstock' => $aProduct['jxoutofstocktext'],
+                'artnum'     => $aProduct['jxartnum']
             );
             $stockValue = $this->_collectStockValue($aCollectParams);
             echo "\n".$aProduct['jxartnum']." - DelivererStock=" . $stockValue ."\n";
@@ -104,6 +105,8 @@ class jxStockCollectCron
                 }
             }
             
+            $this->_updateVarStock($aProduct['jxartnum']);
+            
         } // foreach
 
     }
@@ -141,6 +144,12 @@ class jxStockCollectCron
         }
         //$info = curl_getinfo($ch);
         $info = curl_getinfo($ch);
+        
+        // save the returned http code
+        $sSql = "UPDATE jxstockcollecturls SET jxhttpcode = '{$info['http_code']}' WHERE jxartnum = '{$aCollectParams['artnum']}' ";
+        $stmt = $this->dbh->prepare($sSql);
+        $stmt->execute();
+        
         if ($info['http_code'] != '200') {
             print_r($info);
             return -1;
@@ -171,6 +180,26 @@ class jxStockCollectCron
             }
         }
         
+    }
+
+
+    private function _updateVarStock($sArtnum)
+    {
+        $sSql = "SELECT oxparentid FROM oxarticles WHERE oxartnum = '{$sArtnum}' AND oxparentid != '' ";
+        
+        $stmt = $this->dbh->prepare($sSql);
+        $stmt->execute();
+        $aParentIds = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($aParentIds as $key => $sParentId) {
+            $sSql = "SELECT SUM(oxstock) AS oxstocksum FROM oxarticles WHERE oxparentid = '{$sParentId}' ";
+            $stmt = $this->dbh->prepare($sSql);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            $sSql = "UPDATE oxvarstock SET oxvarstock = {$result['oxstocksum']} WHERE oxid = '{$sParentId}' ";
+            $stmt = $this->dbh->prepare($sSql);
+            $stmt->execute();
+        }
     }
 
 

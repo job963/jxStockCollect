@@ -27,7 +27,7 @@ class jxstockcollect_list extends oxAdminDetails {
     protected $_sThisTemplate = "jxstockcollect_list.tpl";
 
     /**
-     * Displays the 404 entries as full report
+     * Displays the collecting urls 
      */
     public function render() 
     {
@@ -45,7 +45,7 @@ class jxstockcollect_list extends oxAdminDetails {
         
         $oDb = oxDb::getDb( oxDB::FETCH_MODE_ASSOC );
 
-        $sSql = "SELECT DISTINCT u.jxactive, u.jxartnum, u.jxurl, u.jxdeactivation, a.oxstock, "
+        $sSql = "SELECT DISTINCT u.jxactive, u.jxartnum, u.jxurl, u.jxdeactivation, u.jxhttpcode, u.jxtimestamp, a.oxstock, "
                 . "IF(a.oxparentid='', "
                     . "a.oxtitle, "
                     . "CONCAT((SELECT a1.oxtitle FROM oxarticles a1 WHERE a.oxparentid = a1.oxid), ', ', a.oxvarselect)) AS oxfulltitle "

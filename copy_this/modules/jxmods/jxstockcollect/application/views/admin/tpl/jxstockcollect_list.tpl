@@ -74,7 +74,9 @@ function RemoveUrl( sOxIdent )
                     <td class="listheader">[{ oxmultilang ident="GENERAL_ARTNUM" }]</td>
                     <td class="listheader">[{ oxmultilang ident="GENERAL_TITLE" }]/[{ oxmultilang ident="tbclarticle_variant" }]</td>
                     <td class="listheader">[{ oxmultilang ident="GENERAL_ARTICLE_OXSTOCK" }]</td>
-                    <td class="listheader">Deaktiviert[{* oxmultilang ident="JXSTOCKCOLLECT_DEACTIVATION" *}]</td>
+                    <td class="listheader">[{ oxmultilang ident="JXSTOCKCOLLECT_HTTPCODE" }]</td>
+                    <td class="listheader">[{ oxmultilang ident="JXSTOCKCOLLECT_LASTUPDATE" }]</td>
+                    <td class="listheader">[{ oxmultilang ident="JXSTOCKCOLLECT_DEACTIVATION" }]</td>
                     [{*<td class="listheader"></td>*}]
                 </tr>
                 [{foreach item=aArticle from=$aArticles}]
@@ -86,6 +88,8 @@ function RemoveUrl( sOxIdent )
                         <td class="[{ $listclass }]">[{$aArticle.jxartnum}]</td>
                         <td class="[{ $listclass }]" style="padding-top:6px;padding-bottom:6px;"><b>[{$aArticle.oxfulltitle}]</b><br /><a href="[{$aArticle.jxurl}]" target="_blank">[{$aArticle.jxurl}]</a>[{*<div style="height:8px;"></div>*}]</td>
                         <td class="[{ $listclass }]">[{$aArticle.oxstock}]</td>
+                        <td class="[{ $listclass }]">[{$aArticle.jxhttpcode}]</td>
+                        <td class="[{ $listclass }]">[{$aArticle.jxtimestamp}]</td>
                         <td class="[{ $listclass }]">[{if $aArticle.jxdeactivation != "0000-00-00 00:00:00" }][{$aArticle.jxdeactivation}][{/if}]</td>
                         [{*<td class="[{ $listclass }]">
                             [{if !$readonly }]
