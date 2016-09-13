@@ -1,0 +1,46 @@
+/* jxStockCollect CSS */
+
+#liste tr:hover td{
+    background-color: #e0e0e0;
+}
+
+/*#liste td.activetime {
+    background-image: url(bg/ico_activetime.png);
+    min-width: 17px;
+    background-position: center center;
+    background-repeat: no-repeat;
+}*/
+
+.listitem, .listitem2 {
+    padding-left: 4px;
+    padding-right: 16px;
+    white-space: nowrap;
+}
+
+#liste td.titlecol {
+    padding-top: 6px;
+    padding-bottom: 6px;
+    max-width: 400px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+span[class^="httpcode2"] {
+    color: forestgreen;
+}
+
+span[class^="httpcode3"] {
+    color: royalblue;
+}
+
+span[class^="httpcode4"], span[class^="5"] {
+    color: crimson;
+}
+
+span.outdated {
+    color: silver;
+}
+
+span.nostock {
+    color: crimson;
+}

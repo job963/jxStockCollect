@@ -48,7 +48,8 @@ class jxStockCollectCron
                 . "FROM jxstockcollecturls u, jxstockcollectpatterns p "
                 . "WHERE u.jxpatterntype = p.jxpatterntype "
                     . "AND u.jxactive = 1 "
-                    . "AND u.jxdeactivation = '0000-00-00 00:00:00' ";
+                    . "AND u.jxdeactivation = '0000-00-00 00:00:00' "
+                . "ORDER BY u.jxpatterntype, u.jxartnum ";
         
         $stmt = $this->dbh->prepare($sSql);
         $stmt->execute();
@@ -146,9 +147,11 @@ class jxStockCollectCron
         $info = curl_getinfo($ch);
         
         // save the returned http code
-        $sSql = "UPDATE jxstockcollecturls SET jxhttpcode = '{$info['http_code']}' WHERE jxartnum = '{$aCollectParams['artnum']}' ";
+        $sSql = "UPDATE jxstockcollecturls SET jxhttpcode = '{$info['http_code']}', jxtimestamp = NOW() WHERE jxartnum = '{$aCollectParams['artnum']}' ";
+        echo "\n".$sSql;
         $stmt = $this->dbh->prepare($sSql);
         $stmt->execute();
+        echo " (".$stmt->rowCount().")";
         
         if ($info['http_code'] != '200') {
             print_r($info);
