@@ -4,13 +4,6 @@
     background-color: #e0e0e0;
 }
 
-/*#liste td.activetime {
-    background-image: url(bg/ico_activetime.png);
-    min-width: 17px;
-    background-position: center center;
-    background-repeat: no-repeat;
-}*/
-
 .listitem, .listitem2 {
     padding-left: 4px;
     padding-right: 16px;
@@ -42,5 +35,17 @@ span.outdated {
 }
 
 span.nostock {
+    color: crimson;
+}
+
+span.updateOk {
+    color: forestgreen;
+}
+
+span.updateFromInv {
+    color: royalblue;
+}
+
+span.updateErr {
     color: crimson;
 }

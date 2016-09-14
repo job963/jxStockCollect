@@ -24,6 +24,7 @@
 class jxStockCollectCron
 {
     protected $dbh;
+    protected $updated;
 
     public function __construct()
     {
@@ -66,6 +67,7 @@ class jxStockCollectCron
                 'outofstock' => $aProduct['jxoutofstocktext'],
                 'artnum'     => $aProduct['jxartnum']
             );
+            $this->updated = 0;
             $stockValue = $this->_collectStockValue($aCollectParams);
             echo "\n".$aProduct['jxartnum']." - DelivererStock=" . $stockValue ."\n";
             
@@ -78,17 +80,27 @@ class jxStockCollectCron
                 }
             }
             
+            // Product is available at the vendor
             if ($stockValue >= 0) {
-                $sSql = "UPDATE oxarticles SET oxstock={$stockValue} WHERE oxartnum = '{$aProduct['jxartnum']}' ";
+                $sSql = "UPDATE oxarticles SET oxstock={$stockValue}, oxtimestamp = NOW() WHERE oxartnum = '{$aProduct['jxartnum']}' ";
                 try {
                     $stmt = $this->dbh->prepare($sSql);
                     $stmt->execute();
+                    $this->updated = $stmt->rowCount();
+echo $sSql. ' ('.$this->updated.')'."\n";
+        
+                    // store update status
+                    $sSql = "UPDATE jxstockcollecturls SET jxartupdated = {$this->updated}, jxtimestamp = NOW() WHERE jxartnum = '{$aProduct['jxartnum']}' ";
+                    $stmt = $this->dbh->prepare($sSql);
+                    $stmt->execute();
+echo $sSql.' ['.$stmt->rowCount().']'."\n";
                 }
                 catch (Exception $e) {
                     echo 'SQL-Error '.$e->getCode().' in SQL statement'."\n".$e->getMessage()."\n";
                 }
             }
             
+            // Product is available in the own inventory
             if ($stockValue == -2) {
                 if ($this->_isInstalled('jxinvarticles')) {
                     // jxInventory is installed
@@ -98,6 +110,10 @@ class jxStockCollectCron
                     }
                     else {
                         echo "Inventar=".$this->_getInventoryStock($aProduct['jxartnum'])."\n";
+                        $this->updated = -1;
+                        $sSql = "UPDATE jxstockcollecturls SET jxartupdated = {$this->updated}, jxtimestamp = NOW() WHERE jxartnum = '{$aProduct['jxartnum']}' ";
+                        $stmt = $this->dbh->prepare($sSql);
+                        $stmt->execute();
                     }
                 }
                 else {
@@ -136,11 +152,11 @@ class jxStockCollectCron
         $result = curl_exec($ch);
         //echo curl_errno($ch);
         if (empty($result)) {
-            echo 'cURL-Fehler: ' . curl_errno($ch) . ' - ' . curl_error($ch);
+            echo "\n".'cURL-Fehler: ' . curl_errno($ch) . ' - ' . curl_error($ch);
             return -1;
         }
         if (curl_errno($ch) != 0) {
-            echo 'cURL-Fehler: ' . curl_errno($ch) . ' - ' . curl_error($ch);
+            echo "\n".'cURL-Fehler: ' . curl_errno($ch) . ' - ' . curl_error($ch);
             return -1;
         }
         //$info = curl_getinfo($ch);
@@ -148,10 +164,10 @@ class jxStockCollectCron
         
         // save the returned http code
         $sSql = "UPDATE jxstockcollecturls SET jxhttpcode = '{$info['http_code']}', jxtimestamp = NOW() WHERE jxartnum = '{$aCollectParams['artnum']}' ";
-        echo "\n".$sSql;
+echo "\n".$sSql;
         $stmt = $this->dbh->prepare($sSql);
         $stmt->execute();
-        echo " (".$stmt->rowCount().")";
+echo " (".$stmt->rowCount().")";
         
         if ($info['http_code'] != '200') {
             print_r($info);
@@ -163,14 +179,12 @@ class jxStockCollectCron
         
         //echo "\n"."preg_match({$aCollectParams['pattern']}, result, matches)";
         preg_match($aCollectParams['pattern'], $result, $matches);
-        //echo (microtime(true)-$timeBefore) . "\n";
-        //--echo $matches[1];
+
         if (empty($matches)) {
             echo "\n".'matches ist leer';
             return -1;
         }
         
-        //if (strpos($matches[1], 'class="status available"') !== false) {
         if (strpos($matches[1], $aCollectParams['available']) !== false) {
             return 1;
         }
@@ -194,12 +208,13 @@ class jxStockCollectCron
         $stmt->execute();
         $aParentIds = $stmt->fetchAll(PDO::FETCH_ASSOC);
         foreach ($aParentIds as $key => $sParentId) {
-            $sSql = "SELECT SUM(oxstock) AS oxstocksum FROM oxarticles WHERE oxparentid = '{$sParentId}' ";
+            //print_r($sParentId);
+            $sSql = "SELECT SUM(oxstock) AS oxstocksum FROM oxarticles WHERE oxparentid = '{$sParentId['oxparentid']}' ";
             $stmt = $this->dbh->prepare($sSql);
             $stmt->execute();
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             
-            $sSql = "UPDATE oxvarstock SET oxvarstock = {$result['oxstocksum']} WHERE oxid = '{$sParentId}' ";
+            $sSql = "UPDATE oxvarstock SET oxvarstock = {$result['oxstocksum']}, oxtimestamp = NOW() WHERE oxid = '{$sParentId['oxparentid']}' ";
             $stmt = $this->dbh->prepare($sSql);
             $stmt->execute();
         }
@@ -208,13 +223,14 @@ class jxStockCollectCron
 
     private function _deactivateProduct($sArtnum)
     {
-        // mark product as deactivated
-        $sSql = "UPDATE jxstockcollecturls SET jxdeactivation = NOW() WHERE jxartnum = '{$sArtnum}' ";
+        //deactivate product
+        $sSql = "UPDATE oxarticles SET oxactive = 0, oxstock = 0, oxtimestamp = NOW() WHERE oxartnum = '{$sArtnum}' ";
         $stmt = $this->dbh->prepare($sSql);
         $stmt->execute();
+        $this->updated = $stmt->rowCount();
         
-        //deactivate product
-        $sSql = "UPDATE oxarticles SET oxactive = 0, oxstock = 0 WHERE oxartnum = '{$sArtnum}' ";
+        // mark product as deactivated
+        $sSql = "UPDATE jxstockcollecturls SET jxdeactivation = NOW(), jxartupdated = {$this->updated}, jxtimestamp = NOW() WHERE jxartnum = '{$sArtnum}' ";
         $stmt = $this->dbh->prepare($sSql);
         $stmt->execute();
     }

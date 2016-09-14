@@ -45,7 +45,7 @@ class jxstockcollect_list extends oxAdminDetails {
         
         $oDb = oxDb::getDb( oxDB::FETCH_MODE_ASSOC );
 
-        $sSql = "SELECT DISTINCT u.jxpatterntype, u.jxactive, u.jxartnum, u.jxurl, u.jxdeactivation, u.jxhttpcode, u.jxtimestamp, a.oxstock, "
+        $sSql = "SELECT DISTINCT u.jxpatterntype, u.jxactive, u.jxartnum, u.jxurl, u.jxdeactivation, u.jxhttpcode, jxartupdated, u.jxtimestamp, a.oxstock, "
                 . "IF(a.oxparentid='', "
                     . "a.oxtitle, "
                     . "CONCAT((SELECT a1.oxtitle FROM oxarticles a1 WHERE a.oxparentid = a1.oxid), ', ', a.oxvarselect)) AS oxfulltitle "
@@ -80,70 +80,4 @@ class jxstockcollect_list extends oxAdminDetails {
         return $this->_sThisTemplate;
     }
     
-/*    
-    public function saveNewSeoUrls()
-    {
-        $myConfig = oxRegistry::getConfig();
-        if ($myConfig->getBaseShopId() == 'oxbaseshop') {
-            // CE or PE shop
-            $sShopId = "'oxbaseshop' ";
-        } else {
-            // EE shop
-            $sShopId = $myConfig->getBaseShopId();
-        }
-        $iLang = $this->_iEditLang;
-
-        $oDb = oxDb::getDb();
-        $a404Urls = $this->getConfig()->getRequestParameter( 'jx404_404urls' ); 
-        $aSeoUrls = $this->getConfig()->getRequestParameter( 'jx404_seourls' ); 
-
-        foreach ($aSeoUrls as $key => $sSeoUrl) {
-            if ($sSeoUrl != '') {
-                $sSql = "SELECT oxobjectid "
-                        . "FROM oxseo "
-                        . "WHERE oxseourl = '{$sSeoUrl}' "
-                            . "AND oxlang = {$iLang} "
-                            . "AND oxshopid = {$sShopId} "
-                        . "LIMIT 1";
-                $sObjectId = $oDb->getOne($sSql);
-
-                if ($sObjectId != '') {
-                    if ($oDb->getOne("SELECT oxobjectid FROM oxseohistory WHERE oxident = MD5(LOWER('{$a404Urls[$key]}')) AND oxshopid = {$sShopId} AND oxlang = {$iLang} ") == '') {
-                        $sSql = "INSERT INTO oxseohistory "
-                                . "(oxobjectid, oxident, oxshopid, oxlang, oxhits, oxinsert) "
-                                . "VALUES "
-                                . "('{$sObjectId}', MD5(LOWER('{$a404Urls[$key]}')), {$sShopId}, {$iLang}, 0, NOW())";
-                        $oDb->execute($sSql);
-                    }
-                    else {
-                        $sSql = "UPDATE oxseohistory "
-                                . "SET oxobjectid = " . $oDb->quote($sObjectId) . " "
-                                . "WHERE oxident = MD5(LOWER('{$a404Urls[$key]}')) "
-                                    . "AND oxshopid = {$sShopId} "
-                                    . "AND oxlang = {$iLang} ";
-                        $oDb->execute($sSql);
-                    }
-                }
-                else {
-                    echo "URL '{$sSeoUrl}' not found.<br>";
-                }
-            }
-            
-        }
-        return;
-    }
-
-	
-    public function RemoveUrl() 
-    {
-        $sOxIdent = $this->getConfig()->getRequestParameter( 'oxident' ); 
-        
-        $oDb = oxDb::getDb();
-        $sSql = "DELETE FROM oxseohistory WHERE oxident = '{$sOxIdent}' ";
-
-        $oDb->execute($sSql);
-        
-        return;
-    }
-*/    
 }
