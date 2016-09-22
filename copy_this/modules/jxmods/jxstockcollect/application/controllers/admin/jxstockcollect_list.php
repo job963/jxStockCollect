@@ -43,15 +43,22 @@ class jxstockcollect_list extends oxAdminDetails {
             $sWhereShopId = "AND l.oxshopid = {$myConfig->getBaseShopId()} ";
         }*/
         
-        $oDb = oxDb::getDb( oxDB::FETCH_MODE_ASSOC );
+        $sWhere = "";
+        if ( is_array( $aWhere = $this->getConfig()->getRequestParameter( 'jxwhere' ) ) ) {
+            $sWhere = $this->_defineWhere( $aWhere );
+        }
 
-        $sSql = "SELECT DISTINCT u.jxpatterntype, u.jxactive, u.jxartnum, u.jxurl, u.jxdeactivation, u.jxhttpcode, jxartupdated, u.jxtimestamp, a.oxstock, "
-                . "IF(a.oxparentid='', "
-                    . "a.oxtitle, "
-                    . "CONCAT((SELECT a1.oxtitle FROM oxarticles a1 WHERE a.oxparentid = a1.oxid), ', ', a.oxvarselect)) AS oxfulltitle "
+        $sSql = "SELECT DISTINCT u.jxpatterntype, u.jxactive, u.jxartnum, u.jxurl, u.jxdeactivation, u.jxhttpcode, jxartupdated, u.jxtimestamp, "
+                    . "a.oxactive, a.oxstock, "
+                    . "IF(a.oxparentid='', "
+                        . "a.oxtitle, "
+                        . "CONCAT((SELECT a1.oxtitle FROM oxarticles a1 WHERE a.oxparentid = a1.oxid), ', ', a.oxvarselect)) AS oxfulltitle "
                 . "FROM jxstockcollecturls u, oxarticles a "
                 . "WHERE u.jxartnum = a.oxartnum "
-                . "ORDER BY u.jxpatterntype, u.jxartnum ";
+                    . $sWhere
+                . "ORDER BY u.jxpatterntype, oxfulltitle ";
+
+        $oDb = oxDb::getDb( oxDB::FETCH_MODE_ASSOC );
         
         try {
             $rs = $oDb->Select($sSql);
@@ -69,6 +76,7 @@ class jxstockcollect_list extends oxAdminDetails {
         }
         
         $this->_aViewData["aArticles"] = $aArticles;
+        $this->_aViewData["aWhere"] = $aWhere;
         
         $this->_aViewData["sShopUrl"] = $myConfig->getShopURL();
 
@@ -78,6 +86,27 @@ class jxstockcollect_list extends oxAdminDetails {
         $this->_aViewData["sModuleVersion"] = $oModule->getInfo('version');
 
         return $this->_sThisTemplate;
+    }
+    
+    
+    private function _defineWhere( $aWhere )
+    {
+        if ($aWhere['jxactive'] != '')
+            $sWhere .= "AND u.jxactive LIKE '%".$aWhere['jxactive']."%' ";
+        if ($aWhere['oxactive'] != '')
+            $sWhere .= "AND a.oxactive LIKE '%".$aWhere['oxactive']."%' ";
+        if ($aWhere['jxartnum'] != '')
+            $sWhere .= "AND u.jxartnum LIKE '%".$aWhere['jxartnum']."%' ";
+        if ($aWhere['oxfulltitle'] != '')
+            $sWhere .= "AND IF(a.oxparentid = '', a.oxtitle, (SELECT b.oxtitle FROM oxarticles b where b.oxid = a.oxparentid)) LIKE '%".$aWhere['oxfulltitle']."%' ";
+        if ($aWhere['jxpatterntype'] != '')
+            $sWhere .= "AND u.jxpatterntype LIKE '%".$aWhere['jxpatterntype']."%' ";
+        if ($aWhere['oxstock'] != '')
+            $sWhere .= "AND a.oxstock = ".$aWhere['oxstock']." ";
+        if ($aWhere['jxhttp'] != '')
+            $sWhere .= "AND u.jxhttpcode LIKE '".$aWhere['jxhttp']."%' ";
+        
+        return $sWhere;
     }
     
 }

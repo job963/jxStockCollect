@@ -19,7 +19,8 @@
                
 <form name="jxstockcollect" id="jxstockcollect" action="[{ $oViewConf->getSelfLink() }]" method="post">
     [{ $oViewConf->getHiddenSid() }]
-    <input type="hidden" name="cl" value="[{$oViewConf->getActiveClassName()}]">
+    [{*<input type="hidden" name="cl" value="[{$oViewConf->getActiveClassName()}]">*}]
+    <input type="hidden" name="cl" value="jxstockcollect_list">
     <input type="hidden" name="fnc" value="[{*saveNewSeoUrls*}]">
     <input type="hidden" name="oxident" value="">
                        
@@ -38,8 +39,53 @@
                     <col width="10%">
                 </colgroup>*}]
                 <tr>
+                    <td valign="top" class="listfilter first" align="right">
+                        <div class="r1"><div class="b1">
+                                <input class="listedit" type="text" size="2" maxlength="128" name="jxwhere[jxactive]" value="[{ $aWhere.jxactive }]">
+                        </div></div>
+                    </td>
+                    <td valign="top" class="listfilter" align="right">
+                        <div class="r1"><div class="b1">
+                                <input class="listedit" type="text" size="2" maxlength="128" name="jxwhere[oxactive]" value="[{ $aWhere.oxactive }]">
+                        </div></div>
+                    </td>
+                    <td class="listfilter"><div class="r1"><div class="b1">
+                        <input class="listedit" type="text" size="10" maxlength="128" name="jxwhere[jxartnum]" value="[{ $aWhere.jxartnum }]">
+                        </div></div>
+                    </td>
+                    <td class="listfilter"><div class="r1"><div class="b1">
+                        <input class="listedit" type="text" size="30" maxlength="128" name="jxwhere[oxfulltitle]" value="[{ $aWhere.oxfulltitle }]">
+                        </div></div>
+                    </td>
+                    <td class="listfilter"><div class="r1"><div class="b1">
+                        <input class="listedit" type="text" size="10" maxlength="128" name="jxwhere[jxpatterntype]" value="[{ $aWhere.jxpatterntype }]">
+                        </div></div>
+                    </td>
+                    <td class="listfilter"><div class="r1"><div class="b1">
+                        <input class="listedit" type="text" size="6" maxlength="128" name="jxwhere[oxstock]" value="[{ $aWhere.oxstock }]">
+                        </div></div>
+                    </td>
+                    <td class="listfilter"><div class="r1"><div class="b1">
+                        <input class="listedit" type="text" size="6" maxlength="128" name="jxwhere[jxhttp]" value="[{ $aWhere.jxhttp }]">
+                        </div></div>
+                    </td>
+                    <td valign="top" class="listfilter" align="right">
+                        <div class="r1"><div class="b1">&nbsp;</div></div>
+                    </td>
+                    <td valign="top" class="listfilter" align="right">
+                        <div class="r1"><div class="b1">&nbsp;</div></div>
+                    </td>
+                    <td class="listfilter"><div class="r1"><div class="b1"><div class="find">
+                        <input class="listedit" type="submit" name="submitit" value="[{ oxmultilang ident="GENERAL_SEARCH" }]">
+                        </div></div></div>
+                    </td>
+                </tr>
+                <tr>
                     <td class="listheader first" height="15" width="30" align="center">
-                        [{ oxmultilang ident="GENERAL_ACTIVTITLE" }]
+                        [{ oxmultilang ident="JXSTOCKCOLLECT_URL" }]
+                    </td>
+                    <td class="listheader" height="15" width="30" align="center">
+                        [{ oxmultilang ident="JXSTOCKCOLLECT_ART" }]
                     </td>
                     <td class="listheader">[{ oxmultilang ident="GENERAL_ARTNUM" }]</td>
                     <td class="listheader">[{ oxmultilang ident="GENERAL_TITLE" }]/[{ oxmultilang ident="tbclarticle_variant" }]</td>
@@ -51,10 +97,18 @@
                     <td class="listheader">[{ oxmultilang ident="JXSTOCKCOLLECT_DEACTIVATION" }]</td>
                     [{*<td class="listheader"></td>*}]
                 </tr>
+                [{assign var="cntArticles" value=0}]
+                [{assign var="cntCollects" value=0}]
+                [{assign var="cntUpdates" value=0}]
+                [{assign var="cntErrors" value=0}]
                 [{foreach item=aArticle from=$aArticles}]
                     [{ cycle values="listitem,listitem2" assign="listclass" }]
+                    [{assign var="cntArticles" value=$cntArticles+1 }]
                     <tr>
                         <td valign="top" class="[{ $listclass}][{if $aArticle.jxactive == 1}] active[{/if}]" height="15">
+                            <div class="listitemfloating">&nbsp</a></div>
+                        </td>
+                        <td valign="top" class="[{ $listclass}][{if $aArticle.oxactive == 1}] active[{/if}]" height="15">
                             <div class="listitemfloating">&nbsp</a></div>
                         </td>
                         <td class="[{ $listclass }]">[{$aArticle.jxartnum}]</td>
@@ -69,10 +123,17 @@
                             <span class="[{if $aArticle.jxartupdated > 0 }]updateOk[{elseif $aArticle.jxartupdated == -1}]updateFromInv[{else}]updateErr[{/if}]">
                                 [{if $aArticle.jxartupdated > 0 }]
                                     [{ oxmultilang ident="GENERAL_VENDOR" }]
+                                    [{assign var="cntUpdates" value=$cntUpdates+1 }]
                                 [{elseif $aArticle.jxartupdated == -1}]
                                     [{ oxmultilang ident="JXSTOCKCOLLECT_INVENTORY" }]
+                                    [{assign var="cntUpdates" value=$cntUpdates+1 }]
                                 [{else}]
-                                    [{ oxmultilang ident="JXSTOCKCOLLECT_UPDATE_ERROR" }]
+                                    [{if $aArticle.jxhttpcode == ""}]
+                                        [{ oxmultilang ident="JXSTOCKCOLLECT_UNCHECKED" }]
+                                    [{else}]
+                                        [{ oxmultilang ident="JXSTOCKCOLLECT_UPDATE_ERROR" }]
+                                        [{assign var="cntErrors" value=$cntErrors+1 }]
+                                    [{/if}]
                                 [{/if}]
                             </span>
                         </td>
@@ -90,6 +151,21 @@
     [{*<input type="submit"
         value=" [{ oxmultilang ident="GENERAL_SAVE" }] " [{ $readonly }]>*}]
 </form>
+
+<table>
+    <tr>
+        <td><b>Gesamtanzahl</b></td>
+        <td>[{$cntArticles}]</td>
+    </tr>
+    <tr>
+        <td><b>Aktualisiert</b></td>
+        <td>[{$cntUpdates}]</td>
+    </tr>
+    <tr>
+        <td><b>Fehler</b></td>
+        <td>[{$cntErrors}]</td>
+    </tr>
+</table>
 
 [{include file="bottomnaviitem.tpl"}]
 [{include file="bottomitem.tpl"}]
