@@ -1,6 +1,58 @@
 [{include file="headitem.tpl" title="GENERAL_ADMIN_TITLE"|oxmultilangassign}]
 <link href="[{$oViewConf->getModuleUrl('jxStockCollect','out/admin/src/jxstockcollect.css')}]" type="text/css" rel="stylesheet">
 
+<script type="text/javascript">
+  if(top)
+  {
+    top.sMenuItem    = "[{ oxmultilang ident="mxmanageprod" }]";
+    top.sMenuSubItem = "[{ oxmultilang ident="jxcollectstock_list" }]";
+    top.sWorkArea    = "[{$_act}]";
+    top.setTitle();
+  }
+
+function editThis( sID )
+{
+    [{assign var="shMen" value=1}]
+
+    [{foreach from=$menustructure item=menuholder }]
+      [{if $shMen && $menuholder->nodeType == XML_ELEMENT_NODE && $menuholder->childNodes->length }]
+
+        [{assign var="shMen" value=0}]
+        [{assign var="mn" value=1}]
+
+        [{foreach from=$menuholder->childNodes item=menuitem }]
+          [{if $menuitem->nodeType == XML_ELEMENT_NODE && $menuitem->childNodes->length }]
+            [{ if $menuitem->getAttribute('id') == 'mxorders' }]
+
+              [{foreach from=$menuitem->childNodes item=submenuitem }]
+                [{if $submenuitem->nodeType == XML_ELEMENT_NODE && $submenuitem->getAttribute('cl') == 'admin_order' }]
+
+                    if ( top && top.navigation && top.navigation.adminnav ) {
+                        var _sbli = top.navigation.adminnav.document.getElementById( 'nav-1-[{$mn}]-1' );
+                        var _sba = _sbli.getElementsByTagName( 'a' );
+                        top.navigation.adminnav._navAct( _sba[0] );
+                    }
+
+                [{/if}]
+              [{/foreach}]
+
+            [{ /if }]
+            [{assign var="mn" value=$mn+1}]
+
+          [{/if}]
+        [{/foreach}]
+      [{/if}]
+    [{/foreach}]
+
+    var oTransfer = document.getElementById("transfer");
+    oTransfer.oxid.value=sID;
+    oTransfer.cl.value='article';
+    oTransfer.submit();
+}
+
+</script>
+
+
 [{if $readonly}]
     [{assign var="readonly" value="readonly disabled"}]
 [{else}]
@@ -111,13 +163,18 @@
                         <td valign="top" class="[{ $listclass}][{if $aArticle.oxactive == 1}] active[{/if}]" height="15">
                             <div class="listitemfloating">&nbsp</a></div>
                         </td>
-                        <td class="[{ $listclass }]">[{$aArticle.jxartnum}]</td>
+                        <td class="[{ $listclass }]">
+                            <a class="thumbnail" href="Javascript:editThis('[{$aArticle.oxid}]');">[{$aArticle.jxartnum}]
+                                <span><img src="[{$aArticle.picname}]" /></span></a>
+                        </td>
                         <td class="[{ $listclass }] titlecol">
                             <b>[{$aArticle.oxfulltitle}]</b><br />
                             <a href="[{$aArticle.jxurl}]" title="[{$aArticle.jxurl}]" target="_blank">[{$aArticle.jxurl}]</a>[{*<div style="height:8px;"></div>*}]
                         </td>
                         <td class="[{ $listclass }]">[{$aArticle.jxpatterntype|ucfirst}]</td>
-                        <td class="[{ $listclass }]"><span class="[{if $aArticle.oxstock == 0 }]nostock[{/if}]">[{$aArticle.oxstock}]</span></td>
+                        <td class="[{ $listclass }]">
+                            <span class="[{if $aArticle.oxstock == 0 }]nostock[{else}]instock[{/if}]">[{if $aArticle.oxstock > 0 }][{$aArticle.oxstock}][{else}][{ oxmultilang ident="JXSTOCKCOLLECT_NOSTOCK" }][{/if}]</span>
+                        </td>
                         <td class="[{ $listclass }]"><span class="httpcode[{$aArticle.jxhttpcode}]">[{$aArticle.jxhttpcode}]</span></td>
                         <td class="[{ $listclass }]">
                             <span class="[{if $aArticle.jxartupdated > 0 }]updateOk[{elseif $aArticle.jxartupdated == -1}]updateFromInv[{else}]updateErr[{/if}]">

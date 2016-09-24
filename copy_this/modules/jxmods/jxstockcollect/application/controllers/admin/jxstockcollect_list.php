@@ -47,9 +47,34 @@ class jxstockcollect_list extends oxAdminDetails {
         if ( is_array( $aWhere = $this->getConfig()->getRequestParameter( 'jxwhere' ) ) ) {
             $sWhere = $this->_defineWhere( $aWhere );
         }
+        
+        $sPictureUrl = $myConfig->getPictureUrl(FALSE) . 'master/product';
+        /*$sIconCol1 = "IF(a.oxicon!='',"
+                        . "CONCAT('{$sPictureUrl}/icon/',a.oxicon),"
+                        . "IF(a.oxpic1!='',CONCAT('{$sPictureUrl}/1/',a.oxpic1),'')) "
+                        . "AS picname";
+        $sIconCol2 = "(SELECT "
+                        . "IF(b.oxicon!='',"
+                            . "CONCAT('{$sPictureUrl}/icon/',b.oxicon),"
+                            . "IF(b.oxpic1!='',CONCAT('{$sPictureUrl}/1/',b.oxpic1),'')) "
+                        . "FROM oxarticles b "
+                        . "WHERE a.oxparentid = b.oxid) "
+                        . "AS picname ";*/
+        $sPicName = "IF(a.oxparentid='',"
+                    . "IF(a.oxicon!='',"
+                        . "CONCAT('{$sPictureUrl}/icon/',a.oxicon),"
+                        . "IF(a.oxpic1!='',CONCAT('{$sPictureUrl}/1/',a.oxpic1),''))"
+                    . ","
+                    . "(SELECT "
+                        . "IF(b.oxicon!='',"
+                            . "CONCAT('{$sPictureUrl}/icon/',b.oxicon),"
+                            . "IF(b.oxpic1!='',CONCAT('{$sPictureUrl}/1/',b.oxpic1),'')) "
+                        . "FROM oxarticles b "
+                        . "WHERE a.oxparentid = b.oxid)"
+                    . ") AS picname ";
 
         $sSql = "SELECT DISTINCT u.jxpatterntype, u.jxactive, u.jxartnum, u.jxurl, u.jxdeactivation, u.jxhttpcode, jxartupdated, u.jxtimestamp, "
-                    . "a.oxactive, a.oxstock, "
+                    . "a.oxid, a.oxactive, a.oxstock, {$sPicName}, "
                     . "IF(a.oxparentid='', "
                         . "a.oxtitle, "
                         . "CONCAT((SELECT a1.oxtitle FROM oxarticles a1 WHERE a.oxparentid = a1.oxid), ', ', a.oxvarselect)) AS oxfulltitle "
@@ -58,6 +83,7 @@ class jxstockcollect_list extends oxAdminDetails {
                     . $sWhere
                 . "ORDER BY u.jxpatterntype, oxfulltitle ";
 
+//echo $sSql;                    
         $oDb = oxDb::getDb( oxDB::FETCH_MODE_ASSOC );
         
         try {

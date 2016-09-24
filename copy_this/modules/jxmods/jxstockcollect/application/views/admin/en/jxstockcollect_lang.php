@@ -13,6 +13,7 @@ $aLang = array(
     'JXSTOCKCOLLECT_LASTCOLLECT'    => 'Collected at',
     'JXSTOCKCOLLECT_DEACTIVATION'   => 'Deactivated at',
     
+    'JXSTOCKCOLLECT_NOSTOCK'        => 'Out of stock',
     'JXSTOCKCOLLECT_INVENTORY'      => 'Own Stock',
     'JXSTOCKCOLLECT_UPDATE_ERROR'   => 'Update Error',
     'JXSTOCKCOLLECT_UNCHECKED'      => 'Unchecked',
