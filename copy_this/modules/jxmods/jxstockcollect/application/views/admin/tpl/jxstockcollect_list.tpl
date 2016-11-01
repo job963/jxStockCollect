@@ -5,7 +5,7 @@
   if(top)
   {
     top.sMenuItem    = "[{ oxmultilang ident="mxmanageprod" }]";
-    top.sMenuSubItem = "[{ oxmultilang ident="jxcollectstock_list" }]";
+    top.sMenuSubItem = "[{ oxmultilang ident="jxstockcollect_list" }]";
     top.sWorkArea    = "[{$_act}]";
     top.setTitle();
   }

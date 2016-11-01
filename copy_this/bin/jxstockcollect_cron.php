@@ -45,7 +45,7 @@ class jxStockCollectCron
 
     public function updateStockValues()
     {
-        $sSql = "SELECT u.jxurl, p.jxpattern, p.jxavailabletext, p.jxoutofstocktext, u.jxartnum, u.jxstock "
+        $sSql = "SELECT u.jxurl, p.jxpattern, p.jxavailabletext, p.jxlowstocktext, p.jxoutofstocktext, u.jxartnum, u.jxstock "
                 . "FROM jxstockcollecturls u, jxstockcollectpatterns p "
                 . "WHERE u.jxpatterntype = p.jxpatterntype "
                     . "AND u.jxactive = 1 "
@@ -57,13 +57,14 @@ class jxStockCollectCron
         $aProducts = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         if ( count($aProducts) == 0 )
-            echo 'nothing to do';
+            echo 'no products - nothing to do';
         
         foreach ($aProducts as $key => $aProduct) {
             $aCollectParams = array(
                 'url'        => $aProduct['jxurl'],
                 'pattern'    => $aProduct['jxpattern'],
                 'available'  => $aProduct['jxavailabletext'],
+                'lowstock'   => $aProduct['jxlowstocktext'],
                 'outofstock' => $aProduct['jxoutofstocktext'],
                 'artnum'     => $aProduct['jxartnum']
             );
@@ -75,8 +76,11 @@ class jxStockCollectCron
                 if (($this->_isInstalled('jxinvarticles')) and ($this->_getInventoryStock($aProduct['jxartnum']) > 0)) {
                     $stockValue = $this->_getInventoryStock($aProduct['jxartnum']);
                 }
-                else {
+                elseif ($stockValue > 1) {
                     $stockValue = $aProduct['jxstock'];
+                }
+                else {
+                    $stockValue = 1;
                 }
             }
             
@@ -148,22 +152,30 @@ echo $sSql.' ['.$stmt->rowCount().']'."\n";
         curl_setopt($ch, CURLOPT_HTTPGET, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $result = curl_exec($ch);
         //echo curl_errno($ch);
         if (empty($result)) {
-            echo "\n".'cURL-Fehler: ' . curl_errno($ch) . ' - ' . curl_error($ch);
+            echo "\n" . $aCollectParams['url'] . "\n".'cURL-Fehler: ' . curl_errno($ch) . ' - ' . curl_error($ch);
             return -1;
         }
         if (curl_errno($ch) != 0) {
-            echo "\n".'cURL-Fehler: ' . curl_errno($ch) . ' - ' . curl_error($ch);
+            echo "\n" . $aCollectParams['url'] . "\n".'cURL-Fehler: ' . curl_errno($ch) . ' - ' . curl_error($ch);
             return -1;
         }
         //$info = curl_getinfo($ch);
         $info = curl_getinfo($ch);
+        if ($info['redirect_count'] > 0) {
+            echo "redir: ".$info['url']."\n";
+            $info['http_code'] = "301";
+        }
+        else {
+            $info['url'] = '';
+        }
         
         // save the returned http code
-        $sSql = "UPDATE jxstockcollecturls SET jxhttpcode = '{$info['http_code']}', jxtimestamp = NOW() WHERE jxartnum = '{$aCollectParams['artnum']}' ";
+        $sSql = "UPDATE jxstockcollecturls SET jxhttpcode = '{$info['http_code']}', jxredirurl = '{$info['url']}', jxtimestamp = NOW() WHERE jxartnum = '{$aCollectParams['artnum']}' ";
 echo "\n".$sSql;
         $stmt = $this->dbh->prepare($sSql);
         $stmt->execute();
@@ -181,21 +193,27 @@ echo " (".$stmt->rowCount().")";
         preg_match($aCollectParams['pattern'], $result, $matches);
 
         if (empty($matches)) {
-            echo "\n".'matches ist leer';
+            echo "\n".'matches ist leer / nicht gefunden';
             return -1;
         }
         
         if (strpos($matches[1], $aCollectParams['available']) !== false) {
+            // available
+            return 2;
+        }
+        
+        if (strpos($matches[1], $aCollectParams['lowstock']) !== false) {
+            // low stock
             return 1;
         }
-        else {
-            if (strpos($matches[1], $aCollectParams['outofstock']) !== false) {
-                return -2;
-            } 
-            else {
-                return 0;
-            }
-        }
+        
+        if (strpos($matches[1], $aCollectParams['outofstock']) !== false) {
+            // out of stock
+            return -2;
+        } 
+
+        // no info found
+        return 0;
         
     }
 
