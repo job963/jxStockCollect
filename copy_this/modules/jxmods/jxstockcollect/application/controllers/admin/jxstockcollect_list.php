@@ -73,17 +73,18 @@ class jxstockcollect_list extends oxAdminDetails {
                         . "WHERE a.oxparentid = b.oxid)"
                     . ") AS picname ";
 
-        $sSql = "SELECT DISTINCT u.jxpatterntype, u.jxactive, u.jxartnum, u.jxurl, u.jxdeactivation, u.jxhttpcode, jxartupdated, u.jxtimestamp, "
+        $sSql = "SELECT DISTINCT u.jxpatterntype, u.jxactive, u.jxartnum, u.jxurl, u.jxdeactivation, u.jxhttpcode, u.jxdelstock, jxartupdated, u.jxtimestamp, "
                     . "a.oxid, a.oxactive, a.oxstock, {$sPicName}, "
                     . "IF(a.oxparentid='', "
                         . "a.oxtitle, "
                         . "CONCAT((SELECT a1.oxtitle FROM oxarticles a1 WHERE a.oxparentid = a1.oxid), ', ', a.oxvarselect)) AS oxfulltitle "
-                . "FROM jxstockcollecturls u, oxarticles a "
-                . "WHERE u.jxartnum = a.oxartnum "
+                . "FROM jxstockcollecturls u "
+                . "LEFT JOIN oxarticles a "
+                    . "ON (u.jxartnum = a.oxartnum) "
+                . "WHERE u.jxartnum != '' "
                     . $sWhere
-                . "ORDER BY u.jxpatterntype, oxfulltitle ";
+                . "ORDER BY u.jxpatterntype, oxfulltitle";
 
-//echo $sSql;                    
         $oDb = oxDb::getDb( oxDB::FETCH_MODE_ASSOC );
         
         try {

@@ -80,16 +80,6 @@ function editThis( sID )
             <div style="height: 12px;"></div>
             
             <table cellspacing="0" cellpadding="0" border="0" width="99%">
-                [{*<colgroup>
-                    <col width="3%">
-                    <col width="8%">
-                    <col width="34%">
-                    <col width="8%">
-                    <col width="8%">
-                    <col width="5%">
-                    <col width="10%">
-                    <col width="10%">
-                </colgroup>*}]
                 <tr>
                     <td valign="top" class="listfilter first" align="right">
                         <div class="r1"><div class="b1">
@@ -168,12 +158,27 @@ function editThis( sID )
                                 <span><img src="[{$aArticle.picname}]" /></span></a>
                         </td>
                         <td class="[{ $listclass }] titlecol">
-                            <b>[{$aArticle.oxfulltitle}]</b><br />
+                            [{if $aArticle.oxid != ""}]
+                                <b>[{$aArticle.oxfulltitle}]</b>
+                            [{else}]
+                                <span class="updateErr">[{ oxmultilang ident="JXSTOCKCOLLECT_NOTFOUND_ERROR" }]</span>
+                            [{/if}]
+                            <br />
                             <a href="[{$aArticle.jxurl}]" title="[{$aArticle.jxurl}]" target="_blank">[{$aArticle.jxurl}]</a>[{*<div style="height:8px;"></div>*}]
                         </td>
                         <td class="[{ $listclass }]">[{$aArticle.jxpatterntype|ucfirst}]</td>
                         <td class="[{ $listclass }]">
-                            <span class="[{if $aArticle.oxstock == 0 }]nostock[{else}]instock[{/if}]">[{if $aArticle.oxstock > 0 }][{$aArticle.oxstock}][{else}][{ oxmultilang ident="JXSTOCKCOLLECT_NOSTOCK" }][{/if}]</span>
+                            <span class="[{if $aArticle.oxstock == 0 and $aArticle.jxdelstock != "available" }]nostock[{else}]instock[{/if}]">
+                                [{if $aArticle.oxstock > 0 }]
+                                    [{$aArticle.oxstock}]
+                                [{elseif $aArticle.jxdelstock != ""}]
+                                    [{ oxmultilang ident="JXSTOCKCOLLECT_DEL_"|cat:$aArticle.jxdelstock }]
+                                [{elseif $aArticle.oxid == ""}]
+                                    &nbsp;
+                                [{else}]
+                                    [{ oxmultilang ident="JXSTOCKCOLLECT_DEL_outofstock" }]
+                                [{/if}]
+                            </span>
                         </td>
                         <td class="[{ $listclass }]"><span class="httpcode[{$aArticle.jxhttpcode}]">[{$aArticle.jxhttpcode}]</span></td>
                         <td class="[{ $listclass }]">

@@ -69,14 +69,14 @@ class jxStockCollectCron
                 'artnum'     => $aProduct['jxartnum']
             );
             $this->updated = 0;
-            $stockValue = $this->_collectStockValue($aCollectParams);
-            echo "\n".$aProduct['jxartnum']." - DelivererStock=" . $stockValue ."\n";
+            $stockStatus = $this->_collectStockValue($aCollectParams);
+            echo "\n".$aProduct['jxartnum']." - DelivererStock=" . $stockStatus ."\n";
             
-            if ($stockValue > 0) {
+            if ($stockStatus > 0) {
                 if (($this->_isInstalled('jxinvarticles')) and ($this->_getInventoryStock($aProduct['jxartnum']) > 0)) {
                     $stockValue = $this->_getInventoryStock($aProduct['jxartnum']);
                 }
-                elseif ($stockValue > 1) {
+                elseif ($stockStatus > 1) {
                     $stockValue = $aProduct['jxstock'];
                 }
                 else {
@@ -85,27 +85,28 @@ class jxStockCollectCron
             }
             
             // Product is available at the vendor
-            if ($stockValue >= 0) {
+            if ($stockStatus >= 0) {
+                // update stock of article
                 $sSql = "UPDATE oxarticles SET oxstock={$stockValue}, oxtimestamp = NOW() WHERE oxartnum = '{$aProduct['jxartnum']}' ";
                 try {
                     $stmt = $this->dbh->prepare($sSql);
                     $stmt->execute();
                     $this->updated = $stmt->rowCount();
-echo $sSql. ' ('.$this->updated.')'."\n";
-        
-                    // store update status
-                    $sSql = "UPDATE jxstockcollecturls SET jxartupdated = {$this->updated}, jxtimestamp = NOW() WHERE jxartnum = '{$aProduct['jxartnum']}' ";
-                    $stmt = $this->dbh->prepare($sSql);
-                    $stmt->execute();
-echo $sSql.' ['.$stmt->rowCount().']'."\n";
+echo $sSql. ' (u='.$this->updated.')'."\n";
                 }
                 catch (Exception $e) {
                     echo 'SQL-Error '.$e->getCode().' in SQL statement'."\n".$e->getMessage()."\n";
                 }
+                
+                // Store update status
+                $sSql = "UPDATE jxstockcollecturls SET jxartupdated = {$this->updated}, jxdelstock = '" . $this->_textStatus($stockStatus) . "', jxtimestamp = NOW() WHERE jxartnum = '{$aProduct['jxartnum']}' ";
+                $stmt = $this->dbh->prepare($sSql);
+                $stmt->execute();
+echo $sSql.' ['.$stmt->rowCount().']'."\n";
             }
             
-            // Product is available in the own inventory
-            if ($stockValue == -2) {
+            // Product is not available, but maybe in the own inventory
+            if ($stockStatus == -2) {
                 if ($this->_isInstalled('jxinvarticles')) {
                     // jxInventory is installed
                     if ( $this->_getInventoryStock($aProduct['jxartnum']) == 0 ) {
@@ -115,7 +116,7 @@ echo $sSql.' ['.$stmt->rowCount().']'."\n";
                     else {
                         echo "Inventar=".$this->_getInventoryStock($aProduct['jxartnum'])."\n";
                         $this->updated = -1;
-                        $sSql = "UPDATE jxstockcollecturls SET jxartupdated = {$this->updated}, jxtimestamp = NOW() WHERE jxartnum = '{$aProduct['jxartnum']}' ";
+                        $sSql = "UPDATE jxstockcollecturls SET jxartupdated = {$this->updated}, jxdelstock = 'available', jxtimestamp = NOW() WHERE jxartnum = '{$aProduct['jxartnum']}' ";
                         $stmt = $this->dbh->prepare($sSql);
                         $stmt->execute();
                     }
@@ -137,7 +138,8 @@ echo $sSql.' ['.$stmt->rowCount().']'."\n";
      * Collect the stock state from deliverers website
      * 
      * Returns
-     *   1 = available / deliverable
+     *   2 = available / deliverable
+     *   1 = available, but low
      *   0 = not deliverable yet
      *  -1 = error on calling the page
      *  -2 = out of stock
@@ -248,7 +250,7 @@ echo " (".$stmt->rowCount().")";
         $this->updated = $stmt->rowCount();
         
         // mark product as deactivated
-        $sSql = "UPDATE jxstockcollecturls SET jxdeactivation = NOW(), jxartupdated = {$this->updated}, jxtimestamp = NOW() WHERE jxartnum = '{$sArtnum}' ";
+        $sSql = "UPDATE jxstockcollecturls SET jxdeactivation = NOW(), jxartupdated = {$this->updated}, jxdelstock = 'soldout', jxtimestamp = NOW() WHERE jxartnum = '{$sArtnum}' ";
         $stmt = $this->dbh->prepare($sSql);
         $stmt->execute();
     }
@@ -270,6 +272,36 @@ echo " (".$stmt->rowCount().")";
         }
         else {
             return 0;
+        }
+    }
+
+
+    private function _textStatus($iValue)
+    {
+        switch ($iValue) {
+            case 2:
+                return "available";
+                break;
+
+            case 1:
+                return "low";
+                break;
+
+            case 0:
+                return "outofstock";
+                break;
+
+            case -1:
+                return "error";
+                break;
+
+            case -2:
+                return "soldout";
+                break;
+
+            default:
+                return "";
+                break;
         }
     }
 
