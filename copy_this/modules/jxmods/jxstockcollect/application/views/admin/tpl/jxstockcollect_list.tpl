@@ -201,17 +201,10 @@ function editThis( sID )
                         </td>
                         <td class="[{ $listclass }]"><span class="[{if $aArticle.jxtimestamp|date_format:"%D" != $smarty.now|date_format:"%D" }]outdated[{/if}]">[{$aArticle.jxtimestamp}]</span></td>
                         <td class="[{ $listclass }]">[{if $aArticle.jxdeactivation != "0000-00-00 00:00:00" }][{$aArticle.jxdeactivation}][{/if}]</td>
-                        [{*<td class="[{ $listclass }]">
-                            [{if !$readonly }]
-                                <a href="Javascript:RemoveUrl('[{ $a404Url.oxident }]');" class="delete" id="del.[{$_cnt}]" title="" [{*include file="help.tpl" helpid=item_delete*}][{*></a>
-                            [{/if}]
-                        </td>*}]
                     </tr>
                 [{/foreach}]
             </table>
     </div>
-    [{*<input type="submit"
-        value=" [{ oxmultilang ident="GENERAL_SAVE" }] " [{ $readonly }]>*}]
 </form>
 
 <table>

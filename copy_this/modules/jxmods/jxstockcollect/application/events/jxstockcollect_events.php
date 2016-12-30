@@ -42,6 +42,7 @@ class jxStockCollect_Events
                                         . "`jxpatterntype` VARCHAR(80) NULL DEFAULT NULL,"
                                         . "`jxpattern` VARCHAR(255) NULL DEFAULT NULL,"
                                         . "`jxavailabletext` VARCHAR(255) NULL DEFAULT NULL, "
+                                        . "`jxlowstocktext` VARCHAR(255) NULL DEFAULT NULL, "
                                         . "`jxoutofstocktext` VARCHAR(255) NULL DEFAULT NULL "
                                     . ") "
                                     . "ENGINE=MyISAM DEFAULT " . ($isUtf ? ' CHARSET=utf8' : '')
@@ -49,12 +50,18 @@ class jxStockCollect_Events
         $aSql[] = array(
                     "table"     => "jxstockcollecturls",
                     "statement" => "CREATE TABLE `jxstockcollecturls` ("
-                                        . "`jxactive` TINYINT(4) NULL DEFAULT NULL,"
-                                        . "`jxurl` VARCHAR(255) NULL DEFAULT NULL,"
-                                        . "`jxpatterntype` VARCHAR(80) NULL DEFAULT NULL,"
-                                        . "`jxartnum` VARCHAR(255) NULL DEFAULT NULL,"
-                                        . "`jxstock` DOUBLE NULL DEFAULT NULL,"
-                                        . "`jxdeactivation` DATETIME NULL DEFAULT '0000-00-00 00:00:00'"
+                                        . "`jxactive` TINYINT(4) NULL DEFAULT NULL, "
+                                        . "`jxurl` VARCHAR(255) NULL DEFAULT NULL, "
+                                        . "`jxpatterntype` VARCHAR(80) NULL DEFAULT NULL, "
+                                        . "`jxartnum` VARCHAR(255) NULL DEFAULT NULL, "
+                                        . "`jxstock` DOUBLE NULL DEFAULT NULL, "
+                                        . "`jxdeactivation` DATETIME NULL DEFAULT '0000-00-00 00:00:00', "
+                                        . "`jxhttpcode` VARCHAR(5) NULL DEFAULT NULL, "
+                                        . "`jxdelstock` VARCHAR(20) NULL DEFAULT NULL, "
+                                        . "`jxredirurl` VARCHAR(255) NULL DEFAULT NULL, "
+                                        . "`jxartupdated` TINYINT(4) NULL DEFAULT NULL, "
+                                        . "`jxtimestamp` DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, "
+                                        . "UNIQUE INDEX `jxartnum` (`jxartnum`)"
                                     . ") "
                                     . "ENGINE=MyISAM DEFAULT " . ($isUtf ? ' CHARSET=utf8' : '')
                         );
