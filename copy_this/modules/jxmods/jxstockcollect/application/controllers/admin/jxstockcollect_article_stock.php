@@ -52,14 +52,16 @@ class jxstockcollect_article_stock extends jxstockcollect_article_stock_parent
         /*echo '<pre>';
         print_r ($aParams);
         echo '</pre>';*/
-        $oDb = oxDb::getDb();
-        $sSql = "INSERT INTO jxstockcollecturls "
-                    . "(jxactive, jxurl, jxpatterntype, jxartnum, jxstock) "
-                    . "VALUES (1, ".$oDb->quote($aParams['jxurl']).", ".$oDb->quote($aParams['jxpatterntype']).", ".$oDb->quote($aParams['jxartnum']).", ".$oDb->quote($aParams['jxstock']).") "
-                . "ON DUPLICATE KEY UPDATE "
-                    . "jxactive = ".$oDb->quote($aParams['jxactive']).", jxurl = ".$oDb->quote($aParams['jxurl']).", jxpatterntype = ".$oDb->quote(strtolower($aParams['jxpatterntype'])).", jxartnum = ".$oDb->quote($aParams['jxartnum']).", jxstock = ".$oDb->quote($aParams['jxstock'])." ";
-        //echo $sSql;
-        $oDb->execute($sSql);
+        if ($aParams['jxurl'] != "") {
+            $oDb = oxDb::getDb();
+            $sSql = "INSERT INTO jxstockcollecturls "
+                        . "(jxactive, jxurl, jxpatterntype, jxartnum, jxstock) "
+                        . "VALUES (1, ".$oDb->quote($aParams['jxurl']).", ".$oDb->quote($aParams['jxpatterntype']).", ".$oDb->quote($aParams['jxartnum']).", ".$oDb->quote($aParams['jxstock']).") "
+                    . "ON DUPLICATE KEY UPDATE "
+                        . "jxactive = ".$oDb->quote($aParams['jxactive']).", jxurl = ".$oDb->quote($aParams['jxurl']).", jxpatterntype = ".$oDb->quote(strtolower($aParams['jxpatterntype'])).", jxartnum = ".$oDb->quote($aParams['jxartnum']).", jxstock = ".$oDb->quote($aParams['jxstock'])." ";
+            //echo $sSql;
+            $oDb->execute($sSql);
+        }
     }
     
     

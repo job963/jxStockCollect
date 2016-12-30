@@ -48,18 +48,20 @@
                         Lagerbestand/Status
                     </td>
                     <td class="edittext">
-                        <span class="[{if $jxstockcollect.oxstock == 0 and $jxstockcollect.jxdelstock != "available" }]nostock[{else}]instock[{/if}]">
-                            [{if $jxstockcollect.oxstock > 0 }]
-                                [{ oxmultilang ident="JXSTOCKCOLLECT_DEL_available" }]
-                            [{elseif $jxstockcollect.jxdelstock != ""}]
-                                [{ oxmultilang ident="JXSTOCKCOLLECT_DEL_"|cat:$jxstockcollect.jxdelstock }]
-                            [{elseif $jxstockcollect.oxid == ""}]
-                                &nbsp;
-                            [{else}]
-                                [{ oxmultilang ident="JXSTOCKCOLLECT_DEL_outofstock" }]
-                            [{/if}]
-                        </span>				  
-                        (<span class="httpcode[{$jxstockcollect.jxhttpcode}]">[{$jxstockcollect.jxhttpcode}]</span>)
+                        [{if $jxstockcollect.jxurl != ""}]
+                            <span class="[{if $jxstockcollect.oxstock == 0 and $jxstockcollect.jxdelstock != "available" }]nostock[{else}]instock[{/if}]">
+                                [{if $jxstockcollect.oxstock > 0 }]
+                                    [{ oxmultilang ident="JXSTOCKCOLLECT_DEL_available" }]
+                                [{elseif $jxstockcollect.jxdelstock != ""}]
+                                    [{ oxmultilang ident="JXSTOCKCOLLECT_DEL_"|cat:$jxstockcollect.jxdelstock }]
+                                [{elseif $jxstockcollect.oxid == ""}]
+                                    &nbsp;
+                                [{else}]
+                                    [{ oxmultilang ident="JXSTOCKCOLLECT_DEL_outofstock" }]
+                                [{/if}]
+                            </span>				  
+                            (<span class="httpcode[{$jxstockcollect.jxhttpcode}]">[{$jxstockcollect.jxhttpcode}]</span>)
+                        [{/if}]
                     </td>
                 </tr>
             </table>
