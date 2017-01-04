@@ -17,7 +17,7 @@
  *
  * @link      https://github.com/job963/jxStockCollect
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GPL v3 or later
- * @copyright (C) Joachim Barthel 2016
+ * @copyright (C) 2016-2017 Joachim Barthel
  * 
  */
 
@@ -34,7 +34,7 @@ class jxStockCollect_Events
         $sLogPath = oxRegistry::get("oxConfig")->getConfigParam("sShopDir") . '/log/';
         $fh = fopen($sLogPath.'jxmods.log', "a+");
         
-    $sNewUid = oxUtilsObject::getInstance()->generateUID();
+        //$sNewUid = oxUtilsObject::getInstance()->generateUID();
     
         $aSql[] = array(
                     "table"     => "jxstockcollectpatterns",

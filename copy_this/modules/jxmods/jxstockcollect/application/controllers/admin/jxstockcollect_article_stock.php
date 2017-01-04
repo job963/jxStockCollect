@@ -1,9 +1,26 @@
 <?php
 
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ *    This file is part of the module jxStockCollect for OXID eShop Community Edition.
+ *
+ *    The module jxStockCollect for OXID eShop Community Edition is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    The module jxStockCollect for OXID eShop Community Edition is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @link      https://github.com/job963/jxStockCollect
+ * @license   http://www.gnu.org/licenses/gpl-3.0.html GPL v3 or later
+ * @copyright (C) 2016-2017 Joachim Barthel
+ * @author    Joachim Barthel <jobarthel@gmail.com>
+ *
  */
 
 class jxstockcollect_article_stock extends jxstockcollect_article_stock_parent
@@ -12,12 +29,7 @@ class jxstockcollect_article_stock extends jxstockcollect_article_stock_parent
     {
         $mReturn = parent::render();
         $this->_aViewData["jxstockcollect"] = $this->jxsc_LoadDelivererStockData(); 
-                                            /*array(
-                                                "url"      => "https://www.akah.de/rucksaecke/akah-einhand-rucksack-61311000",
-                                                "pattern"  => "Akah",
-                                                "delstock" => "available",
-                                                "httpcode" => "200"
-                                                );*/
+
         return $mReturn;
     }
     
@@ -36,10 +48,6 @@ class jxstockcollect_article_stock extends jxstockcollect_article_stock_parent
 
         $oArticle = oxNew("oxarticle");
         $oArticle->loadInLang($this->_iEditLang, $soxId);
-        /*echo '<hr><pre>';
-        print_r ($oArticle);
-        echo '</pre>';
-        echo $oArticle->oxarticles__oxartnum->rawValue;*/
         $aParams['jxartnum'] = $oArticle->oxarticles__oxartnum->rawValue;
         
         $this->jxsc_SaveDelivererStockData($aParams);
@@ -49,9 +57,6 @@ class jxstockcollect_article_stock extends jxstockcollect_article_stock_parent
     
     
     public function jxsc_SaveDelivererStockData($aParams) {
-        /*echo '<pre>';
-        print_r ($aParams);
-        echo '</pre>';*/
         if ($aParams['jxurl'] != "") {
             $oDb = oxDb::getDb();
             $sSql = "INSERT INTO jxstockcollecturls "
@@ -74,16 +79,12 @@ class jxstockcollect_article_stock extends jxstockcollect_article_stock_parent
         $oDb = oxDb::getDb();
         $sDbName = oxRegistry::getConfig()->getConfigParam('dbName');
         try {
-            //$sSql = "SELECT jxactive, jxurl, jxpatterntype, jxdelstock, jxhttpcode FROM jxstockcollecturls WHERE jxartnum = (SELECT oxartnum FROM oxarticles WHERE oxid = '{$soxId}')";
-            $sSql = "SELECT jxactive, jxurl, jxpatterntype, jxstock, jxdelstock, jxhttpcode, oxid, oxstock "
+            $sSql = "SELECT jxactive, jxurl, jxpatterntype, jxstock, jxdelstock, jxhttpcode, jxtimestamp, oxid, oxstock "
                     . "FROM jxstockcollecturls, oxarticles "
                     . "WHERE jxartnum = oxartnum AND oxid = '{$soxId}' ";
 
             $oDb->setFetchMode(oxDb::FETCH_MODE_ASSOC);
             $aRet = $oDb->getRow($sSql);
-            /*echo '<pre>';
-            var_dump($blRet);
-            echo '</pre>';*/
         }
         catch(Exception $oEx) {
             $aRet = false;

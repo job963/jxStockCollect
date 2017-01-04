@@ -17,7 +17,7 @@
  *
  * @link      https://github.com/job963/jxStockCollect
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GPL v3 or later
- * @copyright (C) 2016 Joachim Barthel
+ * @copyright (C) 2016-2017 Joachim Barthel
  * @author    Joachim Barthel <jobarthel@gmail.com>
  *
  */

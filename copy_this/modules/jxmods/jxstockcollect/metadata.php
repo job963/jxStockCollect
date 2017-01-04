@@ -9,7 +9,7 @@ $sMetadataVersion = '1.1';
  * 
  * @link      https://github.com/job963/jxStockCollect
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GPL v3 or later
- * @copyright (C) Joachim Barthel 2016
+ * @copyright (C) Joachim Barthel 2016-2017
  * 
  **/
 
@@ -27,7 +27,7 @@ $aModule = array(
                                 . '<li>Updating the shop products</ul>',
                         ),
     'thumbnail'    => 'jxstockcollect.png',
-    'version'      => '0.5.0',
+    'version'      => '0.5.1',
     'author'       => 'Joachim Barthel',
     'url'          => 'https://github.com/job963/jxStockCollect',
     'email'        => 'jobarthel@gmail.com',

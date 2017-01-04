@@ -13,6 +13,12 @@ $aLang = array(
     'JXSTOCKCOLLECT_LASTCOLLECT'    => 'Abgefragt am',
     'JXSTOCKCOLLECT_DEACTIVATION'   => 'Deaktiviert am',
     
+    'JXSTOCKCOLLECT_DELIVERER_STOCK'=> 'Lieferantenlagerbestand',
+    'JXSTOCKCOLLECT_COLLECT_URL'    => 'Artikel-URL',
+    'JXSTOCKCOLLECT_COLLECT_PATTERN'=> 'Erkennungstyp',
+    'JXSTOCKCOLLECT_DEFAULT_STOCK'  => 'Lagerbestand',
+    'JXSTOCKCOLLECT_COLLECTED_STOCK'=> 'Lagerbestand/Status',
+    
     'JXSTOCKCOLLECT_DEL_available'  => 'lieferbar',
     'JXSTOCKCOLLECT_DEL_low'        => 'gering',
     'JXSTOCKCOLLECT_DEL_outofstock' => 'nicht vorr&auml;tig',
@@ -24,7 +30,7 @@ $aLang = array(
     'JXSTOCKCOLLECT_INVENTORY'      => 'Eigenlager',
     'JXSTOCKCOLLECT_UPDATE_ERROR'   => 'Updatefehler',
     'JXSTOCKCOLLECT_NOTFOUND_ERROR' => 'Artikel im Shop nicht vorhanden',
-    'JXSTOCKCOLLECT_UNCHECKED'      => 'Ungepr&uuml;ft',
+    'JXSTOCKCOLLECT_UNCHECKED'      => 'Noch nicht ermittelt',
     
     'charset'                       => 'ISO-8859-15',
 );

@@ -1,5 +1,10 @@
 /* jxStockCollect CSS */
 
+div.box {
+    border: none;
+    padding: none;
+}
+
 #liste tr:hover td{
     background-color: #e0e0e0;
 }
