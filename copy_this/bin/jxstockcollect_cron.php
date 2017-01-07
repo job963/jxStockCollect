@@ -17,7 +17,7 @@
  *
  * @link      https://github.com/job963/jxStockCollect
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GPL v3 or later
- * @copyright (C) Joachim Barthel 2016
+ * @copyright (C) 2016-2017 Joachim Barthel
  * 
  */
 
@@ -166,29 +166,44 @@ echo $sSql.' ['.$stmt->rowCount().']'."\n";
             echo "\n" . $aCollectParams['url'] . "\n".'cURL-Fehler: ' . curl_errno($ch) . ' - ' . curl_error($ch);
             return -1;
         }
-        //$info = curl_getinfo($ch);
-        $info = curl_getinfo($ch);
-        if ($info['redirect_count'] > 0) {
-            echo "redir: ".$info['url']."\n";
-            $info['http_code'] = "301";
+        
+        $aCurlInfo = curl_getinfo($ch);
+        if ($aCurlInfo['redirect_count'] > 0) {
+            echo "redir: ".$aCurlInfo['url']."\n";
+            $aCurlInfo['http_code'] = "301";
+            //$aCurlInfo['http_redir'] = 1;
+            $sSql = "UPDATE jxstockcollecturls "
+                    . "SET jxhttpcode = '301', "
+                        . "jxoriginurl = '{$aCollectParams['url']}', "
+                        . "jxurl = '{$aCurlInfo['url']}', "
+                        . "jxredir = 1, "
+                        //. "jxredirurl = '{$aCurlInfo['url']}', "
+                        . "jxtimestamp = NOW() "
+                    . "WHERE jxartnum = '{$aCollectParams['artnum']}' ";
         }
         else {
-            $info['url'] = '';
+            //$aCurlInfo['url'] = '';
+            //$aCurlInfo['http_redir'] = 0;
+            $sSql = "UPDATE jxstockcollecturls "
+                    . "SET jxhttpcode = '{$aCurlInfo['http_code']}', "
+                        //. "jxredirurl = '{$aCurlInfo['url']}', "
+                        . "jxtimestamp = NOW() "
+                    . "WHERE jxartnum = '{$aCollectParams['artnum']}' ";
         }
         
         // save the returned http code
-        $sSql = "UPDATE jxstockcollecturls SET jxhttpcode = '{$info['http_code']}', jxredirurl = '{$info['url']}', jxtimestamp = NOW() WHERE jxartnum = '{$aCollectParams['artnum']}' ";
+        //$sSql = "UPDATE jxstockcollecturls SET jxhttpcode = '{$aCurlInfo['http_code']}', jxredirurl = '{$aCurlInfo['url']}', jxtimestamp = NOW() WHERE jxartnum = '{$aCollectParams['artnum']}' ";
 echo "\n".$sSql;
         $stmt = $this->dbh->prepare($sSql);
         $stmt->execute();
 echo " (".$stmt->rowCount().")";
         
-        if ($info['http_code'] != '200') {
-            print_r($info);
+        if ($aCurlInfo['http_code'] != '200') {
+            print_r($aCurlInfo);
             return -1;
         }
         echo "\n".$aCollectParams['url'];
-        echo "\n".'Es wurden ' . $info['total_time'] . ' Sekunden benoetigt';
+        echo "\n".'Es wurden ' . $aCurlInfo['total_time'] . ' Sekunden benoetigt';
         curl_close ($ch);
         
         //echo "\n"."preg_match({$aCollectParams['pattern']}, result, matches)";

@@ -173,7 +173,10 @@ function editThis( sID )
                             [{/if}]
                         </span>
                     </td>
-                    <td class="[{ $listclass }]"><span class="httpcode[{$aArticle.jxhttpcode}]">[{$aArticle.jxhttpcode}]</span></td>
+                    <td class="[{ $listclass }]">
+                        <span class="httpcode[{$aArticle.jxhttpcode}]">[{$aArticle.jxhttpcode}]</span>
+                        [{if $aArticle.jxredir == 1}]<a href="[{$aArticle.jxoriginurl}]" title="[{$aArticle.jxoriginurl}]" target="_blank">[R]</a>[{/if}]
+                    </td>
                     <td class="[{ $listclass }]">
                         <span class="[{if $aArticle.jxartupdated > 0 }]updateOk[{elseif $aArticle.jxartupdated == -1}]updateFromInv[{else}]updateErr[{/if}]">
                             [{if $aArticle.jxartupdated > 0 }]

@@ -15,19 +15,19 @@ $sMetadataVersion = '1.1';
 
 $aModule = array(
     'id'           => 'jxStockCollect',
-    'title'        => 'jxStockCollect - Collects stock data from deliverer websites',
+    'title'        => 'jxStockCollect - Collects stock data from deliverer websites/shops',
     'description'  => array(
-                        'de' => '<b>Ermitteln der Lagerstandsdaten von den Lieferanten Websites</b><ul>'
+                        'de' => '<b>Ermitteln der Lagerstandsdaten von den Lieferanten Websites oder Webshops</b><ul>'
                                 . '<li>Aufrufen der Lieferantenseiten'
                                 . '<li>Analysieren der Lagerbestandsdaten'
                                 . '<li>Aktualisieren der Shop-Artikel</ul>',
-                        'en' => '<b>Collecting of stock data from deliverer websites</b><ul>'
+                        'en' => '<b>Collecting of stock data from deliverer websites or webshops</b><ul>'
                                 . '<li>Retrieving the deliverer product pages'
                                 . '<li>Analyzing the stock data'
                                 . '<li>Updating the shop products</ul>',
                         ),
     'thumbnail'    => 'jxstockcollect.png',
-    'version'      => '0.5.1',
+    'version'      => '0.6.0',
     'author'       => 'Joachim Barthel',
     'url'          => 'https://github.com/job963/jxStockCollect',
     'email'        => 'jobarthel@gmail.com',

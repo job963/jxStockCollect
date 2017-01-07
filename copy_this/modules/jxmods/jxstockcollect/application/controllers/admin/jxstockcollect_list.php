@@ -73,7 +73,8 @@ class jxstockcollect_list extends oxAdminDetails {
                         . "WHERE a.oxparentid = b.oxid)"
                     . ") AS picname ";
 
-        $sSql = "SELECT DISTINCT u.jxpatterntype, u.jxactive, u.jxartnum, u.jxurl, u.jxdeactivation, u.jxhttpcode, u.jxdelstock, jxartupdated, u.jxtimestamp, "
+        $sSql = "SELECT DISTINCT u.jxpatterntype, u.jxactive, u.jxartnum, u.jxurl, u.jxdeactivation, u.jxhttpcode, jxredir, jxoriginurl, "
+                    . "u.jxdelstock, u.jxartupdated, u.jxtimestamp, "
                     . "a.oxid, a.oxactive, a.oxstock, {$sPicName}, "
                     . "IF(a.oxparentid='', "
                         . "a.oxtitle, "

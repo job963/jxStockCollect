@@ -59,6 +59,8 @@ class jxStockCollect_Events
                                         . "`jxhttpcode` VARCHAR(5) NULL DEFAULT NULL, "
                                         . "`jxdelstock` VARCHAR(20) NULL DEFAULT NULL, "
                                         . "`jxredirurl` VARCHAR(255) NULL DEFAULT NULL, "
+                                        . "`jxredir` TINYINT(4) NULL DEFAULT NULL, "
+                                        . "`jxoriginurl` VARCHAR(255) NULL DEFAULT NULL, "
                                         . "`jxartupdated` TINYINT(4) NULL DEFAULT NULL, "
                                         . "`jxtimestamp` DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, "
                                         . "UNIQUE INDEX `jxartnum` (`jxartnum`)"

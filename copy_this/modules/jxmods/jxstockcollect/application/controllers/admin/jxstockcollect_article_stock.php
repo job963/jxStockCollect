@@ -29,6 +29,10 @@ class jxstockcollect_article_stock extends jxstockcollect_article_stock_parent
     {
         $mReturn = parent::render();
         $this->_aViewData["jxstockcollect"] = $this->jxsc_LoadDelivererStockData(); 
+        $this->_aViewData["jxstockpatterns"] = $this->jxsc_LoadDelivererPatterns(); 
+        //echo '<pre>';
+        //print_r($this->jxsc_LoadDelivererPatterns());
+        //echo '</pre>';
 
         return $mReturn;
     }
@@ -56,30 +60,14 @@ class jxstockcollect_article_stock extends jxstockcollect_article_stock_parent
     
     
     
-    public function jxsc_SaveDelivererStockData($aParams) {
-        if ($aParams['jxurl'] != "") {
-            $oDb = oxDb::getDb();
-            $sSql = "INSERT INTO jxstockcollecturls "
-                        . "(jxactive, jxurl, jxpatterntype, jxartnum, jxstock) "
-                        . "VALUES (1, ".$oDb->quote($aParams['jxurl']).", ".$oDb->quote($aParams['jxpatterntype']).", ".$oDb->quote($aParams['jxartnum']).", ".$oDb->quote($aParams['jxstock']).") "
-                    . "ON DUPLICATE KEY UPDATE "
-                        . "jxactive = ".$oDb->quote($aParams['jxactive']).", jxurl = ".$oDb->quote($aParams['jxurl']).", jxpatterntype = ".$oDb->quote(strtolower($aParams['jxpatterntype'])).", jxartnum = ".$oDb->quote($aParams['jxartnum']).", jxstock = ".$oDb->quote($aParams['jxstock'])." ";
-            //echo $sSql;
-            $oDb->execute($sSql);
-        }
-    }
-    
-    
-    
-    public function jxsc_LoadDelivererStockData() {
-        
+    public function jxsc_LoadDelivererStockData() 
+    {
         $soxId = $this->getEditObjectId();
         
-        
         $oDb = oxDb::getDb();
-        $sDbName = oxRegistry::getConfig()->getConfigParam('dbName');
+        //$sDbName = oxRegistry::getConfig()->getConfigParam('dbName');
         try {
-            $sSql = "SELECT jxactive, jxurl, jxpatterntype, jxstock, jxdelstock, jxhttpcode, jxtimestamp, oxid, oxstock "
+            $sSql = "SELECT jxactive, jxurl, jxpatterntype, jxstock, jxdelstock, jxhttpcode, jxoriginurl, jxredir, jxtimestamp, oxid, oxstock "
                     . "FROM jxstockcollecturls, oxarticles "
                     . "WHERE jxartnum = oxartnum AND oxid = '{$soxId}' ";
 
@@ -90,6 +78,48 @@ class jxstockcollect_article_stock extends jxstockcollect_article_stock_parent
             $aRet = false;
         }
         return $aRet;
+    }
+    
+    
+    
+    public function jxsc_LoadDelivererPatterns() 
+    {
+        $oDb = oxDb::getDb();
+        //$sDbName = oxRegistry::getConfig()->getConfigParam('dbName');
+        try {
+            $sSql = "SELECT jxpatterntype "
+                    . "FROM jxstockcollectpatterns ";
+            $rs = $oDb->Select($sSql);
+
+            $oDb->setFetchMode(oxDb::FETCH_MODE_ASSOC);
+            $aPatterns = array();
+            if ($rs) {
+                while (!$rs->EOF) {
+                    array_push($aPatterns, $rs->fields[0]);
+                    $rs->MoveNext();
+                }
+            }
+        }
+        catch(Exception $oEx) {
+            $aPatterns = false;
+        }
+        return $aPatterns;
+    }
+    
+    
+    
+    public function jxsc_SaveDelivererStockData($aParams) 
+    {
+        if ($aParams['jxurl'] != "") {
+            $oDb = oxDb::getDb();
+            $sSql = "INSERT INTO jxstockcollecturls "
+                        . "(jxactive, jxurl, jxpatterntype, jxartnum, jxstock) "
+                        . "VALUES (1, ".$oDb->quote($aParams['jxurl']).", ".$oDb->quote($aParams['jxpatterntype']).", ".$oDb->quote($aParams['jxartnum']).", ".$oDb->quote($aParams['jxstock']).") "
+                    . "ON DUPLICATE KEY UPDATE "
+                        . "jxactive = ".$oDb->quote($aParams['jxactive']).", jxurl = ".$oDb->quote($aParams['jxurl']).", jxpatterntype = ".$oDb->quote(strtolower($aParams['jxpatterntype'])).", jxartnum = ".$oDb->quote($aParams['jxartnum']).", jxstock = ".$oDb->quote($aParams['jxstock'])." ";
+            //echo $sSql;
+            $oDb->execute($sSql);
+        }
     }
     
 }

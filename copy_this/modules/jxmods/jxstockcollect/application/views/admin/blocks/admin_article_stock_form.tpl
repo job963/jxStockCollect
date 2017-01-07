@@ -19,6 +19,9 @@
                 <tr>
                     <td class="edittext" style="width: 160px;">
                         [{ oxmultilang ident="JXSTOCKCOLLECT_COLLECT_URL" }]
+                        [{if $jxstockcollect.jxredir == 1}]
+                        (<a href="[{$jxstockcollect.jxoriginurl}]" title="[{$jxstockcollect.jxoriginurl}]" target="_blank"><span class="httpcode301">301</span></a>)
+                        [{/if}]
                     </td>
                     <td class="edittext">
                         <input type="text" size="60" name="editval[jxurl]" value="[{$jxstockcollect.jxurl}]">
@@ -32,7 +35,11 @@
                         [{ oxmultilang ident="JXSTOCKCOLLECT_COLLECT_PATTERN" }]
                     </td>
                     <td class="edittext">
-                        <input type="text" size="20" name="editval[jxpatterntype]" value="[{$jxstockcollect.jxpatterntype|ucfirst}]">
+                        <select class="edittext" name="editval[jxpatterntype]">
+                            [{foreach item=sPattern from=$jxstockpatterns}]
+                            <option value="[{$sPattern}]" [{if $sPattern == $jxstockcollect.jxpatterntype}]selected="selected"[{/if}]>[{$sPattern|ucfirst}]</option>
+                            [{/foreach}]
+                        </select>
                     </td>
                 </tr>
                 <tr>
