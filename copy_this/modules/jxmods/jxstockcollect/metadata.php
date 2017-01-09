@@ -27,7 +27,7 @@ $aModule = array(
                                 . '<li>Updating the shop products</ul>',
                         ),
     'thumbnail'    => 'jxstockcollect.png',
-    'version'      => '0.6.0',
+    'version'      => '0.6.1',
     'author'       => 'Joachim Barthel',
     'url'          => 'https://github.com/job963/jxStockCollect',
     'email'        => 'jobarthel@gmail.com',

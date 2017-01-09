@@ -93,6 +93,7 @@ class jxstockcollect_article_stock extends jxstockcollect_article_stock_parent
 
             $oDb->setFetchMode(oxDb::FETCH_MODE_ASSOC);
             $aPatterns = array();
+            $aPatterns[] = "";
             if ($rs) {
                 while (!$rs->EOF) {
                     array_push($aPatterns, $rs->fields[0]);
