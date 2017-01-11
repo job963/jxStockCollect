@@ -2,7 +2,13 @@
 <OX>
     <OXMENU id="NAVIGATION_ESHOPADMIN">
         <MAINMENU id="mxmanageprod">
-            <SUBMENU id="jxstockcollect_list" cl="jxstockcollect_list" rights="malladmin">
+            <SUBMENU id="jxstockcollect_list" cl="jxstockcollect_list">
+            </SUBMENU>
+        </MAINMENU>
+    </OXMENU>
+    <OXMENU id="NAVIGATION_JXMODS">
+        <MAINMENU id="jxStockCollect">
+            <SUBMENU id="jxstockcollect_config" cl="jxstockcollect_config" rights="malladmin">
             </SUBMENU>
         </MAINMENU>
     </OXMENU>

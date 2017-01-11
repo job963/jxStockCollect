@@ -32,6 +32,18 @@ $aLang = array(
     'JXSTOCKCOLLECT_NOTFOUND_ERROR' => 'Artikel im Shop nicht vorhanden',
     'JXSTOCKCOLLECT_UNCHECKED'      => 'Noch nicht ermittelt',
     
+    'NAVIGATION_JXMODS'                     => '<b><i>jx</i> Module</b>',
+    'jxStockCollect'                        => 'jxStockCollect',
+    'jxstockcollect_config'                 => 'Konfiguration',
+    'JXSTOCKCOLLECT_CONFIG_HEADER'          => 'Erkennungsmuster konfigurieren',
+    'JXSTOCKCOLLECT_CONFIG_PATTERNTYPE'     => 'Typ',
+    'JXSTOCKCOLLECT_CONFIG_PATTERNREGEX'    => 'Regul&auml;rer Ausdruck',
+    'JXSTOCKCOLLECT_CONFIG_AVAILABLETEXT'   => 'Text, wenn verf&uuml;gbar',
+    'JXSTOCKCOLLECT_CONFIG_LOWSTOCKTEXT'    => 'Text, wenn gering',
+    'JXSTOCKCOLLECT_CONFIG_OUTOFSTOCKTEXT'  => 'Text, wenn nicht vorr&auml;tig',
+    'JXSTOCKCOLLECT_CONFIG_UPDATE'          => '&Auml;nderungen speichern',
+    'JXSTOCKCOLLECT_CONFIG_ADDNEW'          => 'Hinzuf&uuml;gen',
+    
     'charset'                       => 'ISO-8859-15',
 );
 

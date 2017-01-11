@@ -27,7 +27,7 @@ $aModule = array(
                                 . '<li>Updating the shop products</ul>',
                         ),
     'thumbnail'    => 'jxstockcollect.png',
-    'version'      => '0.6.1',
+    'version'      => '0.7.0',
     'author'       => 'Joachim Barthel',
     'url'          => 'https://github.com/job963/jxStockCollect',
     'email'        => 'jobarthel@gmail.com',
@@ -37,10 +37,12 @@ $aModule = array(
     'files'        => array(
                             'jxstockcollect_events' => 'jxmods/jxstockcollect/application/events/jxstockcollect_events.php',
                             'jxstockcollect_list'   => 'jxmods/jxstockcollect/application/controllers/admin/jxstockcollect_list.php',
-                            'jxstockcollect_article_stock'   => 'jxmods/jxstockcollect/application/controllers/admin/jxstockcollect_article_stock.php'
+                            'jxstockcollect_article_stock' => 'jxmods/jxstockcollect/application/controllers/admin/jxstockcollect_article_stock.php',
+                            'jxstockcollect_config' => 'jxmods/jxstockcollect/application/controllers/admin/jxstockcollect_config.php'
                         ),
     'templates'     => array(
-                            'jxstockcollect_list.tpl' => 'jxmods/jxstockcollect/application/views/admin/tpl/jxstockcollect_list.tpl'
+                            'jxstockcollect_list.tpl'   => 'jxmods/jxstockcollect/application/views/admin/tpl/jxstockcollect_list.tpl',
+                            'jxstockcollect_config.tpl' => 'jxmods/jxstockcollect/application/views/admin/tpl/jxstockcollect_config.tpl'
                         ),
     'blocks'        => array(
                             array( 

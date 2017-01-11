@@ -30,9 +30,6 @@ class jxstockcollect_article_stock extends jxstockcollect_article_stock_parent
         $mReturn = parent::render();
         $this->_aViewData["jxstockcollect"] = $this->jxsc_LoadDelivererStockData(); 
         $this->_aViewData["jxstockpatterns"] = $this->jxsc_LoadDelivererPatterns(); 
-        //echo '<pre>';
-        //print_r($this->jxsc_LoadDelivererPatterns());
-        //echo '</pre>';
 
         return $mReturn;
     }
@@ -91,7 +88,7 @@ class jxstockcollect_article_stock extends jxstockcollect_article_stock_parent
                     . "FROM jxstockcollectpatterns ";
             $rs = $oDb->Select($sSql);
 
-            $oDb->setFetchMode(oxDb::FETCH_MODE_ASSOC);
+            //$oDb->setFetchMode(oxDb::FETCH_MODE_ASSOC);
             $aPatterns = array();
             $aPatterns[] = "";
             if ($rs) {
@@ -118,7 +115,6 @@ class jxstockcollect_article_stock extends jxstockcollect_article_stock_parent
                         . "VALUES (1, ".$oDb->quote($aParams['jxurl']).", ".$oDb->quote($aParams['jxpatterntype']).", ".$oDb->quote($aParams['jxartnum']).", ".$oDb->quote($aParams['jxstock']).") "
                     . "ON DUPLICATE KEY UPDATE "
                         . "jxactive = ".$oDb->quote($aParams['jxactive']).", jxurl = ".$oDb->quote($aParams['jxurl']).", jxpatterntype = ".$oDb->quote(strtolower($aParams['jxpatterntype'])).", jxartnum = ".$oDb->quote($aParams['jxartnum']).", jxstock = ".$oDb->quote($aParams['jxstock'])." ";
-            //echo $sSql;
             $oDb->execute($sSql);
         }
     }
